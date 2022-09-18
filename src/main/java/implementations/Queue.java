@@ -5,45 +5,52 @@ import interfaces.AbstractQueue;
 import java.util.Iterator;
 
 public class Queue<E> implements AbstractQueue<E> {
-    private Node head;
+    private Node<E> head;
+    private Node<E> tail;
     private int size;
 
-    private class Node {
+    private static class Node<E> {
         private E element;
-        private Node next;
+        private Node<E> next;
 
-        Node(E element) {
+        private Node(E element) {
             this.element = element;
-            this.next = null;
         }
+    }
+
+    public Queue() {
     }
 
     @Override
     public void offer(E element) {
-        if (isEmpty()) {
-            this.head = new Node(element);
+        Node<E> newNode = new Node<>(element);
+        if (this.head == null) {
+            this.head = newNode;
         } else {
-            Node current = this.head;
-            while (current.next != null) {
-                current = current.next;
-            }
-            current.next = new Node(element);
+            this.tail.next = newNode;
         }
+        this.tail = newNode;
         this.size++;
     }
 
     @Override
     public E poll() {
-        ensureNotEmpty();
+        ensureNonEmpty();
         E element = this.head.element;
-        this.head = this.head.next;
+        if (this.size == 1) {
+            this.head = null;
+        } else {
+            Node<E> next = this.head.next;
+            this.head.next = null;
+            this.head = next;
+        }
         this.size--;
         return element;
     }
 
     @Override
     public E peek() {
-        ensureNotEmpty();
+        ensureNonEmpty();
         return this.head.element;
     }
 
@@ -54,17 +61,17 @@ public class Queue<E> implements AbstractQueue<E> {
 
     @Override
     public boolean isEmpty() {
-        return this.head == null;
+        return this.size == 0;
     }
 
     @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
-            private Node current = head;
+            private Node<E> current = head;
 
             @Override
             public boolean hasNext() {
-                return this.current.next != null;
+                return this.current != null;
             }
 
             @Override
@@ -76,9 +83,9 @@ public class Queue<E> implements AbstractQueue<E> {
         };
     }
 
-    private void ensureNotEmpty() {
-        if (isEmpty()) {
-            throw new IllegalStateException();
+    private void ensureNonEmpty() {
+        if (this.size == 0) {
+            throw new IllegalStateException("Illegal operation on empty stack");
         }
     }
 }

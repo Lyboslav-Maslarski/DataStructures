@@ -17,7 +17,7 @@ public class QueueTest {
     }
 
     @Test
-    public void testPushShouldAddAtTheEnd() {
+    public void testOfferShouldAddAtTheEnd() {
         queue.offer("Slayer");
         assertEquals("0", queue.peek());
     }
