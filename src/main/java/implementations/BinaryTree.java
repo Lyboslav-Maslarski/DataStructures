@@ -52,7 +52,11 @@ public class BinaryTree<E> implements AbstractBinaryTree<E> {
     }
 
     private String getPadding(int indent) {
-        return " ".repeat(Math.max(0, indent));
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            result.append(" ");
+        }
+        return result.toString();
     }
 
     @Override
