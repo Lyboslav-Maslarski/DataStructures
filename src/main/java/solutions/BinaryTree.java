@@ -1,9 +1,35 @@
 package solutions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BinaryTree {
+    static class Pair<K, V> {
+        private K key;
+        private V value;
+
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public K getKey() {
+            return key;
+        }
+
+        public void setKey(K key) {
+            this.key = key;
+        }
+
+        public V getValue() {
+            return value;
+        }
+
+        public void setValue(V value) {
+            this.value = value;
+        }
+    }
+
     private int value;
     private BinaryTree left;
     private BinaryTree right;
@@ -54,6 +80,26 @@ public class BinaryTree {
     }
 
     public List<Integer> topView() {
-        return null;
+        Map<Integer, Pair<Integer, Integer>> offsetToValueLevel = new TreeMap<>();
+
+        traverseTree(this, 0, 1, offsetToValueLevel);
+        return offsetToValueLevel
+                .values()
+                .stream()
+                .map(Pair::getKey)
+                .collect(Collectors.toList());
+
+    }
+
+    private void traverseTree(BinaryTree binaryTree, int offset, int level, Map<Integer, Pair<Integer, Integer>> offsetToValueLevel) {
+        if (binaryTree == null) {
+            return;
+        }
+        Pair<Integer, Integer> currentValueLevel = offsetToValueLevel.get(offset);
+        if (currentValueLevel == null || level < currentValueLevel.getValue()) {
+            offsetToValueLevel.put(offset, new Pair<>(binaryTree.value, level));
+        }
+        traverseTree(binaryTree.left, offset - 1, level + 1, offsetToValueLevel);
+        traverseTree(binaryTree.right, offset + 1, level + 1, offsetToValueLevel);
     }
 }
