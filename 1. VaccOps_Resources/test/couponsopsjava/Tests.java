@@ -28,15 +28,13 @@ public class Tests {
     private Coupon c5 = new Coupon("e", 0, 3);
 
     @Before
-    public void Setup()
-    {
+    public void Setup() {
         this.couponOperations = new CouponOperation();
     }
 
     // 1
     @Test
-    public void TestRegisterWebsite()
-    {
+    public void TestRegisterWebsite() {
         this.couponOperations.registerSite(w1);
 
         assertTrue(this.couponOperations.exist(w1));
@@ -44,16 +42,14 @@ public class Tests {
 
     // 2
     @Test(expected = IllegalArgumentException.class)
-    public void TestRegisteringWebsiteTwiceThrowException()
-    {
+    public void TestRegisteringWebsiteTwiceThrowException() {
         this.couponOperations.registerSite(w1);
         this.couponOperations.registerSite(w1);
     }
 
     // 3
     @Test
-    public void TestRegisteringManyWebsites()
-    {
+    public void TestRegisteringManyWebsites() {
         this.couponOperations.registerSite(w1);
         this.couponOperations.registerSite(w2);
         this.couponOperations.registerSite(w3);
@@ -63,8 +59,7 @@ public class Tests {
 
     // 4
     @Test
-    public void TestAddingCoupon()
-    {
+    public void TestAddingCoupon() {
         this.couponOperations.registerSite(w1);
         this.couponOperations.addCoupon(w1, c1);
 
@@ -73,8 +68,7 @@ public class Tests {
 
     // 5
     @Test(expected = IllegalArgumentException.class)
-    public void TestAddingCouponTwice()
-    {
+    public void TestAddingCouponTwice() {
         this.couponOperations.registerSite(w1);
         this.couponOperations.addCoupon(w1, c1);
         this.couponOperations.addCoupon(w1, c1);
@@ -82,25 +76,22 @@ public class Tests {
 
     // 7
     @Test(expected = IllegalArgumentException.class)
-    public void TestAddingCouponForNonExistentSite()
-    {
+    public void TestAddingCouponForNonExistentSite() {
         this.couponOperations.registerSite(w2);
         this.couponOperations.addCoupon(w1, c1);
     }
 
     // Performance
-        @Test
-    public void RegisterSitePerf()
-    {
-        for (int i = 0; i < 10000; i++)
-        {
+    @Test
+    public void RegisterSitePerf() {
+        for (int i = 0; i < 10000; i++) {
             this.couponOperations.registerSite(new Website(i + "", i));
         }
 
         long start = System.currentTimeMillis();
         this.couponOperations.registerSite(new Website("test", 1));
         long stop = System.currentTimeMillis();
-        assertTrue(stop - start <=20);
+        assertTrue(stop - start <= 20);
     }
 
 }
