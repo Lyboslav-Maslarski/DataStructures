@@ -1,56 +1,119 @@
 package main;
 
-import java.util.Iterator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Hierarchy<T> implements IHierarchy<T> {
+    private Map<T, HierarchyNode<T>> data;
+    private HierarchyNode<T> root;
 
+    public Hierarchy(T element) {
+        this.data = new HashMap<>();
+
+        HierarchyNode<T> root = new HierarchyNode<>(element);
+        this.root = root;
+        this.data.put(element, root);
+    }
 
     @Override
     public int getCount() {
-        return 0;
+        return this.data.size();
     }
 
     @Override
     public void add(T element, T child) {
+        HierarchyNode<T> parent = this.data.get(element);
+        if (parent == null) {
+            throw new IllegalArgumentException();
+        }
 
+        if (data.containsKey(child)) {
+            throw new IllegalArgumentException();
+        }
+        HierarchyNode<T> toBeAdded = new HierarchyNode<>(child);
+        toBeAdded.setParent(parent);
+
+        parent.getChildren().add(toBeAdded);
+
+        this.data.put(child, toBeAdded);
     }
 
     @Override
     public void remove(T element) {
+        HierarchyNode<T> toRemove = this.data.get(element);
+        if (toRemove == null) {
+            throw new IllegalArgumentException();
+        }
 
+        if (toRemove.getParent() == null) {
+            throw new IllegalStateException();
+        }
+
+        HierarchyNode<T> parent = toRemove.getParent();
+        List<HierarchyNode<T>> children = toRemove.getChildren();
+
+        children.forEach(child -> child.setParent(parent));
+
+        parent.getChildren().addAll(children);
+        parent.getChildren().remove(toRemove);
+
+        this.data.remove(element);
     }
 
     @Override
     public Iterable<T> getChildren(T element) {
-        return null;
+        HierarchyNode<T> node = this.data.get(element);
+        if (node == null) {
+            throw new IllegalArgumentException();
+        }
+        return node.getChildren().stream()
+                .map(HierarchyNode::getValue)
+                .collect(Collectors.toList());
     }
 
     @Override
     public T getParent(T element) {
-        return null;
+        HierarchyNode<T> node = this.data.get(element);
+        if (node == null) {
+            throw new IllegalArgumentException();
+        }
+        return node.getParent() == null ? null : node.getParent().getValue();
     }
 
     @Override
     public boolean contains(T element) {
-        return false;
+        return this.data.containsKey(element);
     }
 
     @Override
     public Iterable<T> getCommonElements(IHierarchy<T> other) {
-        return null;
+        List<T> result = new ArrayList<>();
+
+        this.data.keySet().forEach(k -> {
+            if (other.contains(k)) {
+                result.add(k);
+            }
+        });
+
+        return result;
     }
 
     @Override
     public Iterator<T> iterator() {
-        return new Iterator<T>() {
+        ArrayDeque<HierarchyNode<T>> deque = new ArrayDeque<>();
+        deque.offer(this.root);
+
+        return new Iterator<>() {
             @Override
             public boolean hasNext() {
-                return false;
+                return deque.size() > 0;
             }
 
             @Override
             public T next() {
-                return null;
+                HierarchyNode<T> node = deque.poll();
+                deque.addAll(node.getChildren());
+                return node.getValue();
             }
         };
     }
