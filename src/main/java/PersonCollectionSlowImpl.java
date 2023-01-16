@@ -1,42 +1,70 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class PersonCollectionSlowImpl implements PersonCollection {
+    List<Person> people;
+
+    public PersonCollectionSlowImpl() {
+        this.people = new ArrayList<>();
+    }
 
     @Override
     public boolean add(String email, String name, int age, String town) {
-        throw new UnsupportedOperationException();
+        boolean emailAlreadyExist = people.stream().anyMatch(person -> person.getEmail().equals(email));
+        if (emailAlreadyExist) {
+            return false;
+        }
+        Person person = new Person(email, name, age, town);
+        people.add(person);
+        return true;
     }
 
     @Override
     public int getCount() {
-        throw new UnsupportedOperationException();
+        return people.size();
     }
 
     @Override
     public boolean delete(String email) {
-        throw new UnsupportedOperationException();
+        return people.removeIf(person -> person.getEmail().equals(email));
     }
 
     @Override
     public Person find(String email) {
-        throw new UnsupportedOperationException();
+        return people.stream().filter(person -> person.getEmail().equals(email)).findFirst().orElse(null);
     }
 
     @Override
     public Iterable<Person> findAll(String emailDomain) {
-        throw new UnsupportedOperationException();
+        return people.stream()
+                .filter(person -> person.getEmail().endsWith("@" + emailDomain))
+                .sorted(Comparator.comparing(Person::getEmail))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Iterable<Person> findAll(String name, String town) {
-        throw new UnsupportedOperationException();
+        return people.stream()
+                .filter(person -> person.getName().equals(name) && person.getTown().equals(town))
+                .sorted(Comparator.comparing(Person::getEmail))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Iterable<Person> findAll(int startAge, int endAge) {
-        throw new UnsupportedOperationException();
+        return people.stream()
+                .filter(person -> person.getAge() >= startAge && person.getAge() <= endAge)
+                .sorted(Comparator.comparing(Person::getAge).thenComparing(Person::getEmail))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Iterable<Person> findAll(int startAge, int endAge, String town) {
-        throw new UnsupportedOperationException();
+        return people.stream()
+                .filter(person -> person.getAge() >= startAge && person.getAge() <= endAge && person.getTown().equals(town))
+                .sorted(Comparator.comparing(Person::getAge).thenComparing(Person::getEmail))
+                .collect(Collectors.toList());
     }
 }
