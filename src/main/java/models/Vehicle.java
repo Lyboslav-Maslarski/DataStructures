@@ -17,7 +17,6 @@ public class Vehicle {
     private double price;
 
     private boolean isVIP;
-    private String seller;
 
     public Vehicle(String id, String brand, String model, String location, String color, int horsepower, double price, boolean isVIP) {
         this.id = id;
@@ -92,13 +91,5 @@ public class Vehicle {
 
     public void setIsVIP(boolean VIP) {
         this.isVIP = VIP;
-    }
-
-    public String getSeller() {
-        return seller;
-    }
-
-    public void setSeller(String seller) {
-        this.seller = seller;
     }
 }
